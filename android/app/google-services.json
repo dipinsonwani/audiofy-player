@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "823144915051",
+    "project_id": "audiofy-cc534",
+    "storage_bucket": "audiofy-cc534.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823144915051:android:36c387a0e2820472c4112e",
+        "android_client_info": {
+          "package_name": "com.example.audiofy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuD1UHO7RLzRnjHVHeuUo2iXeHqxBekGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
