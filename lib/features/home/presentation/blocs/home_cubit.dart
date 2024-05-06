@@ -28,4 +28,23 @@ class HomeCubit extends Cubit<HomeState> {
       fetchSongs();
     }
   }
+
+  Future<void> querySongs(String key) async {
+    try {
+      final songsList = await getAllSongsUsecase.call();
+      final List<SongEntity> searhResults = [];
+      if (key != '') {
+        for (var song in songsList!) {
+          if (song.songName.toLowerCase().contains(key.toLowerCase())) {
+            searhResults.add(song);
+          }
+        }
+        emit(HomeState.songsFetched(searhResults));
+      } else {
+        emit(HomeState.songsFetched(songsList!));
+      }
+    } catch (e) {
+      emit(const HomeState.error());
+    }
+  }
 }

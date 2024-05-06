@@ -36,8 +36,10 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (state is SongsFetchedState) ...[
-                      const SearchBar(
+                      SearchBar(
                         hintText: 'Search',
+                        onChanged: (value) =>
+                            context.read<HomeCubit>().querySongs(value),
                       ),
                       SizedBox(
                         height: 600,
