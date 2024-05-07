@@ -1,14 +1,16 @@
 import 'dart:async';
-
+import 'package:audiofy/features/home/domain/entities/song_entity.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class PlayerWidget extends StatefulWidget {
   final AudioPlayer player;
+  final SongEntity song;
 
   const PlayerWidget({
     required this.player,
     super.key,
+    required this.song,
   });
 
   @override
@@ -38,7 +40,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   void initState() {
     super.initState();
-    // Use initial values from player
     _playerState = player.state;
     player.getDuration().then(
           (value) => setState(() {
@@ -55,8 +56,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   void setState(VoidCallback fn) {
-    // Subscriptions only can be closed asynchronously,
-    // therefore events can occur after widget has been disposed.
     if (mounted) {
       super.setState(fn);
     }
@@ -82,21 +81,14 @@ class _PlayerWidgetState extends State<PlayerWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              key: const Key('play_button'),
-              onPressed: _isPlaying ? null : _play,
+              onPressed: _isPlaying ? _pause : _play,
               iconSize: 48.0,
-              icon: const Icon(Icons.play_arrow),
+              icon: _isPlaying
+                  ? const Icon(Icons.pause)
+                  : const Icon(Icons.play_arrow),
               color: color,
             ),
             IconButton(
-              key: const Key('pause_button'),
-              onPressed: _isPlaying ? _pause : null,
-              iconSize: 48.0,
-              icon: const Icon(Icons.pause),
-              color: color,
-            ),
-            IconButton(
-              key: const Key('stop_button'),
               onPressed: _isPlaying || _isPaused ? _stop : null,
               iconSize: 48.0,
               icon: const Icon(Icons.stop),
@@ -157,6 +149,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   Future<void> _play() async {
+    if (_playerState == PlayerState.stopped) {
+      final fileUrl = DeviceFileSource(widget.song.songUrl);
+      player.play(fileUrl);
+    }
     await player.resume();
     setState(() => _playerState = PlayerState.playing);
   }

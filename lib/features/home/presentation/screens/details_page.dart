@@ -19,37 +19,54 @@ class _DetailsPageState extends State<DetailsPage> {
   late AudioPlayer player = AudioPlayer();
 
   @override
+  void initState() {
+    final fileUrl = DeviceFileSource(widget.song.songUrl);
+    player.play(fileUrl);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Music Details Page'),
       ),
+      //TODO: Work on Hero animation or remove it
       body: Center(
+          child: Hero(
+        tag: widget.song.id,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-        children: [
-          Image.network(widget.song.imageUrl),
-          PlayerWidget(
-            player: player,
+            children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: Image.network(widget.song.imageUrl)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text(widget.song.songName),
+                  IconButton(
+                      onPressed: () {
+                        context.read<HomeCubit>().setSongAsFavourite(
+                            widget.song, !widget.song.isFavourite);
+                      },
+                      icon: widget.song.isFavourite
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(Icons.favorite_outline_outlined)),
+                ],
+              ),
+              Text(widget.song.artistName),
+              PlayerWidget(
+                player: player,
+                song: widget.song,
+              ),
+            ],
           ),
-          ElevatedButton(
-              onPressed: () async {
-                final fileUrl = DeviceFileSource(widget.song.songUrl);
-                await player.play(fileUrl);
-              },
-              child: const Text('Play')),
-          IconButton(
-              onPressed: () {
-                context
-                    .read<HomeCubit>()
-                    .setSongAsFavourite(widget.song, !widget.song.isFavourite);
-              },
-              icon: widget.song.isFavourite
-                  ? const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    )
-                  : const Icon(Icons.favorite_outline_outlined))
-        ],
+        ),
       )),
     );
   }
