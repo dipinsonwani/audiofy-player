@@ -6,6 +6,7 @@ import 'package:audiofy/features/auth/domain/usecases/sign_up_use_case.dart';
 import 'package:audiofy/features/auth/domain/usecases/stream_auth_user_use_case.dart';
 import 'package:audiofy/features/auth/presentation/blocs/auth_cubit.dart';
 import 'package:audiofy/features/auth/presentation/blocs/auth_state.dart';
+import 'package:audiofy/features/theme/presentation/blocs/theme_bloc.dart';
 import 'package:audiofy/router/router.gr.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,30 +24,46 @@ class MainApplication extends StatelessWidget {
         authRemoteDataSource: AuthRemoteDataSourceImpl(
       userCollection: userCollection,
     ));
-    return BlocProvider(
-      create: (context) => AuthCubit(
-          signInUseCase: SignInUseCase(authRepository: authRepository),
-          signUpUseCase: SignUpUseCase(repository: authRepository),
-          signOutUseCase: SignOutUseCase(repository: authRepository),
-          streamAuthUserUsecase: StreamAuthUserUsecase(
-            authRepository: authRepository,
-          ))
-        ..initial(),
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          router.replaceAll([
-            state.maybeMap(
-              orElse: () => const RegisterRoute(),
-              unauthenticated: (value) => const LoginRoute(),
-              authenticated: (value) => const HomeRoute(),
-              loading: (value) => const LoadingRoute(),
-            ),
-          ]);
-        },
-        builder: (context, state) {
-          return MaterialApp.router(
-            routeInformationParser: router.defaultRouteParser(),
-            routerDelegate: router.delegate(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ThemeBloc(const ThemeLightState()),
+        ),
+        BlocProvider(
+          create: (context) => AuthCubit(
+              signInUseCase: SignInUseCase(authRepository: authRepository),
+              signUpUseCase: SignUpUseCase(repository: authRepository),
+              signOutUseCase: SignOutUseCase(repository: authRepository),
+              streamAuthUserUsecase: StreamAuthUserUsecase(
+                authRepository: authRepository,
+              ))
+            ..initial(),
+        ),
+      ],
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          return BlocConsumer<AuthCubit, AuthState>(
+            listener: (context, state) {
+              router.replaceAll([
+                state.maybeMap(
+                  orElse: () => const RegisterRoute(),
+                  unauthenticated: (value) => const LoginRoute(),
+                  authenticated: (value) => const HomeRoute(),
+                  loading: (value) => const LoadingRoute(),
+                ),
+              ]);
+            },
+            builder: (context, state) {
+              return MaterialApp.router(
+                routeInformationParser: router.defaultRouteParser(),
+                routerDelegate: router.delegate(),
+                theme: ThemeData.light(),
+                darkTheme: ThemeData.dark()
+                    .copyWith(primaryColor: Theme.of(context).primaryColor),
+                themeMode: themeState.map(
+                    dark: (_) => ThemeMode.dark, light: (_) => ThemeMode.light),
+              );
+            },
           );
         },
       ),
