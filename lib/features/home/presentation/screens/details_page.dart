@@ -17,9 +17,10 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   late AudioPlayer player = AudioPlayer();
-
+  late bool isFav;
   @override
   void initState() {
+    isFav = widget.song.isFavourite;
     final fileUrl = DeviceFileSource(widget.song.songUrl);
     player.play(fileUrl);
     super.initState();
@@ -58,10 +59,13 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                   IconButton(
                       onPressed: () {
+                        setState(() {
+                          isFav = !isFav;
+                        });
                         context.read<HomeCubit>().setSongAsFavourite(
                             widget.song, !widget.song.isFavourite);
                       },
-                      icon: widget.song.isFavourite
+                      icon: isFav
                           ? const Icon(
                               Icons.favorite,
                               color: Colors.red,
