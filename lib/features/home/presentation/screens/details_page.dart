@@ -3,7 +3,9 @@ import 'package:audiofy/features/home/presentation/blocs/home_cubit.dart';
 import 'package:audiofy/features/home/presentation/widgets/player_widget.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
@@ -31,7 +33,6 @@ class _DetailsPageState extends State<DetailsPage> {
       appBar: AppBar(
         title: const Text('Music Details Page'),
       ),
-      //TODO: Work on Hero animation or remove it
       body: Center(
           child: Hero(
         tag: widget.song.id,
@@ -43,9 +44,20 @@ class _DetailsPageState extends State<DetailsPage> {
                   borderRadius: BorderRadius.circular(16.0),
                   child: Image.network(widget.song.imageUrl)),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(widget.song.songName),
+                  Expanded(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Text(
+                          widget.song.songName,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
                   IconButton(
                       onPressed: () {
                         context.read<HomeCubit>().setSongAsFavourite(
