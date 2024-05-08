@@ -50,6 +50,8 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_storage: ^0.0.3
   internet_connection_checker: ^1.0.0+1
+  mocktail_image_network: ^1.1.0
+  bloc_test: ^9.1.7
   
 
 dev_dependencies:
