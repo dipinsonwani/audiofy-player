@@ -1,6 +1,7 @@
 import 'package:audiofy/features/auth/presentation/widgets/login_form.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -9,10 +10,23 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Image.asset(
+                  'assets/audiofy.png',
+                  color: Theme.of(context).primaryColor,
+                  scale: 8,
+                ),
+              ),
+              const LoginForm(),
+            ],
+          ),
+        ),
       ),
-      body: const LoginForm(),
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:audiofy/features/auth/domain/usecases/sign_up_use_case.dart';
 import 'package:audiofy/features/auth/domain/usecases/stream_auth_user_use_case.dart';
 import 'package:audiofy/features/auth/presentation/blocs/auth_state.dart';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final SignInUseCase signInUseCase;
