@@ -22,7 +22,6 @@ class MusicRepositoryImpl implements MusicRepository {
           ? await homeRemoteDataSource.getAllSongs()
           : await localDataSource.getAllSongs();
       if (list == null) {
-        //TODO: Handle This case
         return [];
       }
       return list.map((e) => e.toEntity()).toList();

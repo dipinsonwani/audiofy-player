@@ -29,11 +29,6 @@ class SongService {
   }
 
   Future<void> saveSongs(List<s.SongModel> songs) async {
-    //TODO: save keys for each song to fetch it in hive
-    // final map = songs.fold<Map<String, dynamic>>({}, (acc, element) {
-    //   acc[element.id] = element.toHiveSongModel();
-    //   return acc;
-    // });
     await songsBox
         .putAll(songs.map((e) => e.toHiveSongModel()).toList().asMap());
   }
