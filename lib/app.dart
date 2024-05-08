@@ -24,6 +24,7 @@ class MainApplication extends StatelessWidget {
         authRemoteDataSource: AuthRemoteDataSourceImpl(
       userCollection: userCollection,
     ));
+    final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -41,30 +42,38 @@ class MainApplication extends StatelessWidget {
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          return BlocConsumer<AuthCubit, AuthState>(
-            listener: (context, state) {
-              router.replaceAll([
-                state.maybeMap(
-                  orElse: () => const RegisterRoute(),
-                  unauthenticated: (value) => const LoginRoute(),
-                  authenticated: (value) => const HomeRoute(),
-                  loading: (value) => const LoadingRoute(),
-                ),
-              ]);
-            },
-            builder: (context, state) {
-              return MaterialApp.router(
-                routeInformationParser: router.defaultRouteParser(),
-                routerDelegate: router.delegate(),
-                theme: ThemeData.light(),
-                darkTheme: ThemeData.dark()
-                    .copyWith(primaryColor: Theme.of(context).primaryColor),
-                themeMode: themeState.map(
-                    dark: (_) => ThemeMode.dark, light: (_) => ThemeMode.light),
-              );
-            },
-          );
+        builder: (ctx, themeState) {
+          return Builder(builder: (context) {
+            return BlocConsumer<AuthCubit, AuthState>(
+              listener: (ctx, state) {
+                if (state is ErrorAuthState) {
+                  scaffoldKey.currentState!.showSnackBar(SnackBar(
+                      content: Text(state.message ?? 'Something went wrong')));
+                }
+                router.replaceAll([
+                  state.map(
+                    error: (value) => const LoginRoute(),
+                    unauthenticated: (value) => const LoginRoute(),
+                    authenticated: (value) => const HomeRoute(),
+                    loading: (value) => const LoadingRoute(),
+                  ),
+                ]);
+              },
+              builder: (context, state) {
+                return MaterialApp.router(
+                  scaffoldMessengerKey: scaffoldKey,
+                  routeInformationParser: router.defaultRouteParser(),
+                  routerDelegate: router.delegate(),
+                  theme: ThemeData.light(),
+                  darkTheme: ThemeData.dark()
+                      .copyWith(primaryColor: Theme.of(context).primaryColor),
+                  themeMode: themeState.map(
+                      dark: (_) => ThemeMode.dark,
+                      light: (_) => ThemeMode.light),
+                );
+              },
+            );
+          });
         },
       ),
     );
